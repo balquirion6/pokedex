@@ -1,0 +1,137 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+
+<dom-module id="pokedex-app">
+  <template>
+
+<app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/"
+        data="{{routeData}}"
+        tail="{{subroute}}">
+    </app-route>
+
+    <style>
+      :host {
+        display: flex;
+      }
+	
+      .container{
+      	width: 85%;
+	max-width: 740px;
+	margin: 0 auto;
+	margin-top: 1em;
+      }
+      .icon-page-controls{
+      	fill: red;
+	width: 70px;
+	height: 70px;
+      }
+	paper-card {
+		--paper-card-header-color: darkcyan;
+		--paper-card-background-color: lightcyan;
+		margin: 0.2em;
+		width: 150px;
+		height: 220px
+	}
+	paper-spinner {
+   	width: 200px;
+   	height: 200px;
+	}
+    </style>
+    <div class="container">
+	<iron-ajax
+		id="pokedexGetAjax"
+	url="https://pokeapi.co/api/v2/pokemon/?offset={{currentPage}}&limit={{pageLimit}}"
+	   handle-as="json"
+	   last-response="{{data}}"
+	   loading="{{loading}}"
+	></iron-ajax>
+
+<template is="dom-if" if="{{loading}}">
+      <paper-spinner active></paper-spinner>
+    </template>	
+	<template if="{{!loading}}" is="dom-if">
+		<p align="center">
+		<iron-icon icon="hardware:keyboard-arrow-left" class="icon-page-controls" on-click="prevPage" hidden="{{_isFirstPage}}"></iron-icon>
+		<iron-icon icon="hardware:keyboard-arrow-right" class="icon-page-controls" on-click="nextPage"></iron-icon>
+		</p>
+	</template>
+
+	<template is="dom-repeat" if="{{!loading}}" items="[[data.results]]" as="pokemon">
+    	
+		<paper-card width="200px" height="500px" image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{displayIndex(pokemon.url)}}.png">
+      <div class="card-content" >
+	      <strong>	#{{displayIndex(pokemon.url)}}</strong> </br> {{pokemon.name}}
+      </div>
+      </paper-card>	
+	</template>
+	<template if="{{!loading}}" is="dom-if">
+		<p align="center">
+		<iron-icon icon="hardware:keyboard-arrow-left" class="icon-page-controls" on-click="prevPage" hidden="{{!isFirstPage}}"></iron-icon>
+		<iron-icon icon="hardware:keyboard-arrow-right" class="icon-page-controls" on-click="nextPage"></iron-icon>		</p>
+	</template>
+
+	    </div>
+  </template>
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class PokedexApp extends Polymer.Element {
+      static get is() { return 'pokedex-app'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'pokedex-app'
+          },
+		pageLimit:{
+			type: Number,
+			value: 20
+		},
+		currentPage:{
+			type: Number,
+			value: 0,
+			observer: 'pageObserver',
+			notify: true
+		},
+		_isFirstPage:{
+			type: Boolean,
+			computed: 'isFirstPage(currentPage)'
+		}
+        };
+      }
+	displayIndex(url) {
+                return url.substring(34, url.length -1 );
+            }
+		
+	    isFirstPage(_currentPage){
+		return _currentPage == 0;
+	    }
+	    nextPage(){
+		this.set('currentPage', (this.currentPage + this.pageLimit) );
+	    }
+	    prevPage(){
+		this.currentPage -= this.pageLimit;
+	    }
+	    pageObserver(_currPageNew, _currPageOld){
+	    	console.log("Observed: ", _currPageNew, _currPageOld);
+		    this.$.pokedexGetAjax.generateRequest();
+	    }
+ready() {
+  super.ready();
+	this.$.pokedexGetAjax.generateRequest();
+}
+    }
+    window.customElements.define(PokedexApp.is, PokedexApp);
+  </script>
+</dom-module>

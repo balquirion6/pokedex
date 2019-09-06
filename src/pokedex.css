@@ -1,0 +1,26 @@
+:host {
+    display: flex;
+  }
+
+  .container{
+      width: 85%;
+max-width: 740px;
+margin: 0 auto;
+margin-top: 1em;
+  }
+  .icon-page-controls{ 
+      fill: red;
+width: 70px;
+height: 70px;
+  }
+paper-card {
+    --paper-card-header-color: darkcyan;
+    --paper-card-background-color: lightcyan;
+    margin: 0.2em;
+    width: 150px;
+    height: 220px
+}
+paper-spinner {
+   width: 200px;
+   height: 200px;
+}

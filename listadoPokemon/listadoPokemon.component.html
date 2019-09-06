@@ -1,0 +1,84 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<iron-ajax
+		id="pokedexGetAjax"
+  	url="https://pokeapi.co/api/v2/pokemon/?offset={{currentPage}}&limit={{pageLimit}}"
+	   handle-as="json"
+	   last-response="{{data}}"
+     loading="{{loading}}"
+     auto
+	></iron-ajax>
+
+</iron-ajax>
+<dom-module id="listado-pokemon">
+<template if="{{ loading }}" is="dom-if">
+  <paper-spinner active></paper-spinner>
+</template>
+<template if="{{!loading}}" is="dom-repeat" items="[[data.results]]" as="pokemon">
+  <paper-card width="200px" heigth="500px" image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{displayIndex(pokemon.url)}}.png">
+    <strong>	#{{displayIndex(pokemon.url)}}</strong> </br> {{pokemon.name}}
+  </paper-card>
+</template>
+<p>
+  listadoPokemon works!
+</p>
+<script>
+    /** 
+     * @customElement
+     * @polymer
+     */
+    class ListadoPokemon extends Polymer.Element {
+      static get is() { return 'listado-pokemon'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'listado-pokemon'
+          },
+		pageLimit:{
+			type: Number,
+			value: 20
+		},
+		currentPage:{
+			type: Number,
+			value: 0,
+			observer: 'pageObserver',
+			notify: true
+		},
+		_isFirstPage:{
+			type: Boolean,
+			computed: 'isFirstPage(currentPage)'
+		}
+        };
+      }
+	displayIndex(url) {
+                return url.substring(34, url.length -1 );
+            }
+		
+	    isFirstPage(_currentPage){
+		return _currentPage == 0;
+	    }
+	    nextPage(){
+		this.set('currentPage', (this.currentPage + this.pageLimit) );
+	    }
+	    prevPage(){
+		this.currentPage -= this.pageLimit;
+	    }
+	    pageObserver(_currPageNew, _currPageOld){
+	    	console.log("Observed: ", _currPageNew, _currPageOld);
+		    //this.$.pokedexGetAjax.generateRequest();
+	    }
+ready() {
+  super.ready();
+	//this.$.pokedexGetAjax.generateRequest();
+}
+    }
+    window.customElements.define(ListadoPokemon.is, ListadoPokemon);
+  </script>
+</dom-module>

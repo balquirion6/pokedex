@@ -1,0 +1,47 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="stylesheet" href="./pokedex.css">
+<dom-module id="pokedex-mod">
+    <template>
+        <paper-input >{{currentPage}}</paper-input>
+        <paper-button></paper-button>
+        <p>
+
+                listadoPokemon works!
+              </p>
+    <iron-ajax
+		id="pokedexGetAjax"
+  	    url="https://pokeapi.co/api/v2/pokemon/?offset={{currentPage}}&limit={{pageLimit}}"
+	    handle-as="json"
+	    last-response="{{data}}"
+        loading="{{loading}}"     
+	></iron-ajax>
+
+
+<dom-module id="pokedex-mod">
+<template if="{{ loading }}" is="dom-if">
+  <paper-spinner active></paper-spinner>
+</template>
+<template if="{{!loading}}" is="dom-if">
+		<p align="center">
+		<iron-icon icon="hardware:keyboard-arrow-left" class="icon-page-controls" on-click="prevPage" hidden="{{_isFirstPage}}"></iron-icon>
+		<iron-icon icon="hardware:keyboard-arrow-right" class="icon-page-controls" on-click="nextPage"></iron-icon>
+		</p>
+	</template>
+
+<template if="{{!loading}}" is="dom-repeat" items="[[data.results]]" as="pokemon">
+        <a >
+  <paper-card width="200px" heigth="500px" image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{displayIndex(pokemon.url)}}.png" on-click="clickeado" >
+    <strong>	#{{displayIndex(pokemon.url)}}</strong> </br> {{pokemon.name}}
+  </paper-card></a>
+</template>
+</template>
+
+    <script src="pokedex.js"></script>

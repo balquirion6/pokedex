@@ -1,0 +1,7 @@
+{
+  "name": "pokedex",
+  "short_name": "pokedex",
+  "description": "consulta pokemon api",
+  "start_url": "/",
+  "display": "standalone"
+}
